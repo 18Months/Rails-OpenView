@@ -33,7 +33,15 @@ class RailsOpenViewCommand(sublime_plugin.WindowCommand):
 			base_path = os.path.join(base[:-1])
 			print (base_path)
 			middle_path = base[-1].split("_controller")[0]
-			file_name = base_path[0]+"views/"+middle_path+"/"+view.substr(view.word(text))+".html.erb"
+			file_name = base_path[0]+"views/"+middle_path+"/"+view.substr(view.word(text))
+			found = False
+			for extension in [".html.erb", ".html.haml", ".js.erb", ".js.haml"]:
+				if os.path.isfile(file_name+extension):
+					file_name = file_name+extension
+					found = True
+			if not found and not os.path.exists(file_name.rsplit('/', 1)[0]):
+				os.makedirs(file_name.rsplit('/', 1)[0])
+				file_name = file_name+".html.haml"
 			buffer = self.window.open_file(file_name)
 
 	def run(self):
